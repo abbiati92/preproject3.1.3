@@ -43,4 +43,9 @@ public class UserDaoImpl implements UserDao {
     public void editUser(User user) {
         entityManager.merge(user);
     }
+
+    @Override
+    public User findByUsername(String username) {
+        return null;
+    }
 }
