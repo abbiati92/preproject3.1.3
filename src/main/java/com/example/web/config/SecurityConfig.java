@@ -7,6 +7,7 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -14,39 +15,43 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-
+    private final LoginSuccessHandler loginSuccessHandler;
     private final UserService userService;
 
     @Autowired
-    public SecurityConfig(UserService userService) {
+    public SecurityConfig(UserService userService, LoginSuccessHandler loginSuccessHandler) {
         this.userService = userService;
+        this.loginSuccessHandler = loginSuccessHandler;
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.formLogin()
-                .successHandler(new LoginSuccessHandler())
-                .loginProcessingUrl("/login")
-                .usernameParameter("username")
-                .passwordParameter("password")
-                .permitAll();
-
-        http.logout()
-                .permitAll()
-                .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                .logoutSuccessUrl("/login")
-                .and().csrf().disable();
-
-        http.authorizeRequests()
-                .antMatchers("/user").hasAnyRole("USER", "ADMIN")
+        http
+                .authorizeRequests()
+                .antMatchers("/user").hasAnyRole("USER","ADMIN")
                 .antMatchers("/admin/**").hasRole("ADMIN")
-                .and().formLogin().permitAll();
+                .anyRequest().authenticated()
+                .and()
+                .formLogin().successHandler(loginSuccessHandler)
+                .permitAll()
+                .and()
+                .logout((logout) -> logout
+                        .logoutUrl("/logout")
+                        .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET"))
+                        .logoutSuccessUrl("/login")
+                        .permitAll());
     }
 
+    @Bean
+    public PasswordEncoder passwordEncoder(){
+        return new BCryptPasswordEncoder();
+    }
 
     @Bean
     public DaoAuthenticationProvider daoAuthenticationProvider() {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
+        authenticationProvider.setPasswordEncoder(passwordEncoder());
+        authenticationProvider.setUserDetailsService(userService);
         return authenticationProvider;
     }
 }

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import java.util.List;
 
 
@@ -46,6 +47,9 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public User findByUsername(String username) {
-        return null;
+        Query query = entityManager.createQuery
+                ("select u from User u left join fetch u.roles where u.userName=:username", User.class);
+        query.setParameter("username", username);
+        return (User) query.getSingleResult();
     }
 }

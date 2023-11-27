@@ -8,7 +8,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
-import static org.apache.catalina.realm.UserDatabaseRealm.getRoles;
 
 @Entity
 @Table (name = "users")

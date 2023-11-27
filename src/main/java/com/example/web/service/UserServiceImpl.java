@@ -3,6 +3,9 @@ package com.example.web.service;
 import com.example.web.dao.UserDao;
 import com.example.web.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,13 +43,25 @@ public class UserServiceImpl implements UserService {
     public void deleteUser(Long id) {
         userDao.deleteUser(id);
     }
-
     @Override
     public void editUser(User user) {
         userDao.editUser(user);
     }
+
     @Override
     public User findByUsername(String username) {
-        return null;
+       return userDao.findByUsername(username);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = userDao.findByUsername(username);
+        if (user == null){
+            throw new UsernameNotFoundException(String.format("User %s not found",username));
+        }
+        return new  org.springframework.security.core.userdetails.User( user.getUsername(),user.getPassword(),
+                user.isAccountNonExpired(), user.isCredentialsNonExpired(),
+                user.isEnabled(), user.isAccountNonLocked(),
+                user.getRoles());
     }
 }
