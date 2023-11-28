@@ -7,7 +7,7 @@
 <body>
 <h2>Add New User </h2>
 <br>
-<form th:method = "POST" th:action = "@{/}" th:object = "${user}">
+<form th:method = "POST" th:action = "@{/admin/new}" th:object = "${user}">
     <label for="name">Имя: </label>
     <input type="text" th:field="*{firstName}" id="name"/>
     <br/>
@@ -16,7 +16,8 @@
     <br/>
     <label for="email">Эл. почта: </label>
     <input type="text" th:field="*{email}" id="email"/>
-    <br/>
+
+
     <input type="submit" value="Add New User"/>
 </form>
 </body>

@@ -8,7 +8,7 @@
 <body>
 <div>
     <form action="#"
-          th:action="@{/edit}"
+          th:action="@{/admin/edit}"
           th:object="${user}"
           method="post">
         <input hidden="hidden" type="number" th:field="*{id}" id="idAdd" placeholder="id">

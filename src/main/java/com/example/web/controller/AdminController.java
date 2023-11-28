@@ -17,7 +17,7 @@ public class AdminController {
         this.userService = userService;
     }
 
-    @GetMapping("/users")
+    @GetMapping()
     public String getUsers(Model model) {
         model.addAttribute("users", userService.getUsersList());
         return "users";
@@ -28,16 +28,16 @@ public class AdminController {
         return "new_user";
     }
 
-    @PostMapping("/")
+    @PostMapping("/new")
     public String addUser(@ModelAttribute("user") User user) {
         userService.addUser(user);
-        return "redirect:/";
+        return "redirect:/admin";
     }
 
     @RequestMapping("/deleteUser")
     public String removeUser(@RequestParam("id") Long id) {
         userService.deleteUser(id);
-        return "redirect:/";
+        return "redirect:/admin";
     }
 
     @GetMapping("/updateUser")
@@ -49,6 +49,6 @@ public class AdminController {
     @PostMapping("/edit")
     public String editUser(@ModelAttribute("user") User user) {
         userService.editUser(user);
-        return "redirect:/";
+        return "redirect:/admin";
     }
 }

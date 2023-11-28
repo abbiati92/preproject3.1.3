@@ -12,6 +12,8 @@
     <th>Имя</th>
     <th>Фамилия</th>
     <th>Эл. почта</th>
+    <th>User name</th>
+    <th>Пароль</th>
     </thead>
     <tbody>
     <tr th:each="user : ${users}">
@@ -20,15 +22,18 @@
         <td th:text="${user.getLastName()}"></td>
         <td th:text="${user.getEmail()}"></td>
         <td>
-            <a th:href="'/updateUser?id='+${user.id}">Update</a>
-            <a th:href="'/deleteUser?id='+${user.id}">Delete</a>
+            <a th:href="'/admin/updateUser?id='+${user.id}">Update</a>
+            <a th:href="'/admin/deleteUser?id='+${user.id}">Delete</a>
         </td>
     </tr>
     </tbody>
 </table>
 <br>
 <input type="button" value="Add User"
-       onclick="window.location.href = 'new'">
-
+       onclick="window.location.href = '/admin/new'">
+<br>
+<form th:action="@{/logout}" method="get">
+    <input type="submit" value="Logout"/>
+</form>
 </body>
 </html>
