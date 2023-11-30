@@ -5,6 +5,7 @@ import com.example.web.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
@@ -34,19 +35,19 @@ public class AdminController {
         return "redirect:/admin";
     }
 
-    @RequestMapping("/deleteUser")
-    public String removeUser(@RequestParam("id") Long id) {
+    @GetMapping("/deleteUser")
+    public String deleteUser(@RequestParam("id") long id) {
         userService.deleteUser(id);
         return "redirect:/admin";
     }
 
     @GetMapping("/updateUser")
-    public String getEditUserForm(Model model, @RequestParam("id") Long id) {
+    public String showAndEdit(ModelMap model, @RequestParam("id") long id) {
         model.addAttribute("user", userService.getUser(id));
         return "edit_user";
     }
 
-    @PostMapping("/edit")
+    @PostMapping("/updateUser")
     public String editUser(@ModelAttribute("user") User user) {
         userService.editUser(user);
         return "redirect:/admin";

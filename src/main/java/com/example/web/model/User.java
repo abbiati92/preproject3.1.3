@@ -25,19 +25,18 @@ public class User implements UserDetails {
     @Column(name = "user_name")
     private String userName;
     @Column(name = "password")
-    private String password;
+    private String userPassword;
 
     public User() {
 
     }
 
-    public User(Long id, String firstName, String lastName, String email, String userName, String password) {
-        this.id = id;
+    public User(String firstName, String lastName, String email, String userName, String userPassword) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.userName = userName;
-        this.password = password;
+        this.userPassword= userPassword;
     }
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -73,12 +72,28 @@ public class User implements UserDetails {
     public void setEmail(String email) { this.email = email; }
 
     @Override
-    public String getPassword() { return password; }
+    public String getPassword() { return getUserPassword(); }
 
     @Override
-    public String getUsername() { return userName; }
+    public String getUsername() { return getUserName(); }
 
     public List<Role> getRoles() { return roles; }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getUserPassword() {
+        return userPassword;
+    }
+
+    public void setUserPassword(String userPassword) {
+        this.userPassword = userPassword;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -118,6 +133,10 @@ public class User implements UserDetails {
         return Objects.hash(id, firstName, lastName, email);
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -125,6 +144,8 @@ public class User implements UserDetails {
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", email='" + email + '\'' +
+                ", userName='" + userName + '\'' +
+                ", password='" + userPassword + '\'' +
                 '}';
     }
 }

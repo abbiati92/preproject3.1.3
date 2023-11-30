@@ -8,7 +8,7 @@
 <body>
 <div>
     <form action="#"
-          th:action="@{/admin/edit}"
+          th:action="@{/admin/updateUser}"
           th:object="${user}"
           method="post">
         <input hidden="hidden" type="number" th:field="*{id}" id="idAdd" placeholder="id">
@@ -20,6 +20,12 @@
         <br>
         <label for="emailUpdate">Эл. почта</label>
         <input type="text" th:field="*{email}" id="emailUpdate" placeholder="Эл. почта">
+        <br>
+        <label for="userNameUpdate">User name</label>
+        <input type="text" th:field="*{userName}" id="userNameUpdate" placeholder="User name">
+        <br>
+        <label for="passwordUpdate">Пароль</label>
+        <input type="text" th:field="*{userPassword}" id="passwordUpdate" placeholder="Пароль">
         <br>
         <input type="submit" value="Изменить пользователя">
     </form>
