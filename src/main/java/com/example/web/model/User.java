@@ -79,6 +79,10 @@ public class User implements UserDetails {
 
     public List<Role> getRoles() { return roles; }
 
+    public void setRoles(List<Role> roles) {
+        this.roles = roles;
+    }
+
     public String getUserName() {
         return userName;
     }
@@ -132,6 +136,7 @@ public class User implements UserDetails {
     public int hashCode() {
         return Objects.hash(id, firstName, lastName, email);
     }
+
 
     public void setId(Long id) {
         this.id = id;

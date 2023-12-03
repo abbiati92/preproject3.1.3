@@ -64,4 +64,8 @@ public class UserServiceImpl implements UserService {
                 user.isEnabled(), user.isAccountNonLocked(),
                 user.getRoles());
     }
+    @Override
+    public void setUserRole(Long id, int roleId) {
+        userDao.setUserRole(id, roleId);
+    }
 }

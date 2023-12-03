@@ -1,5 +1,6 @@
 package com.example.web.dao;
 
+import com.example.web.model.Role;
 import com.example.web.model.User;
 import org.springframework.stereotype.Repository;
 
@@ -51,5 +52,13 @@ public class UserDaoImpl implements UserDao {
                 ("select u from User u left join fetch u.roles where u.userName=:username", User.class);
         query.setParameter("username", username);
         return (User) query.getSingleResult();
+    }
+
+   @Override
+    public void setUserRole(Long id, int roleId) {
+        entityManager.createNativeQuery("INSERT INTO user_roles (users_id, roles_id) VALUES (?,?)")
+                .setParameter(1, id)
+                .setParameter(2, roleId)
+                .executeUpdate();
     }
 }
