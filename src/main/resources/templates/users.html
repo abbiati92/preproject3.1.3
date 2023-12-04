@@ -14,15 +14,18 @@
     <th>Эл. почта</th>
     <th>User name</th>
     <th>Пароль</th>
+    <th>Роль</th>
     </thead>
     <tbody>
     <tr th:each="user : ${users}">
         <td th:text="${user.getId()}"></td>
-        <td th:text="${user.getFirstName()}"></td>
+        <td th:text="${user.firstName}"></td>
         <td th:text="${user.getLastName()}"></td>
         <td th:text="${user.getEmail()}"></td>
         <td th:text="${user.getUsername()}"></td>
         <td th:text="${user.getPassword()}"></td>
+        <td th:text="${user.getRoles()}"></td>
+
         <td>
             <a th:href="'/admin/updateUser?id='+${user.getId()}">Update</a>
             <a th:href="'/admin/deleteUser?id='+${user.getId()}">Delete</a>

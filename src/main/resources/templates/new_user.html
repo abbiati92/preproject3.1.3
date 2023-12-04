@@ -23,12 +23,11 @@
     <label for="password">Пароль: </label>
     <input type="text" th:field="*{userPassword}" id="password"/>
     <br/>
-    <label>Роль: </label>
-    <br/>
-    <input type="checkbox" id="role_user" name="id_role" value="1" />
-    <label for="role_user">Admin</label>
-    <input type="checkbox" id="role_admin" name="id_role" value="2" />
-    <label for="role_admin">User</label>
+    <label for="roles">Роль:</label>
+    <select  id="roles" name="checkRoles">
+        <option selected="true">USER</option>
+        <option>ADMIN</option>
+    </select>
     <br/>
     <input type="submit" value="Add New User"/>
 </form>

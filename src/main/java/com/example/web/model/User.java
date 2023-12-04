@@ -4,9 +4,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 
 @Entity
@@ -43,7 +41,7 @@ public class User implements UserDetails {
     @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "users_id"),
             inverseJoinColumns = @JoinColumn(name = "roles_id"))
-    private List<Role> roles;
+    private Set<Role> roles = new HashSet<>();
 
     public Long getId() {
         return id;
@@ -77,9 +75,9 @@ public class User implements UserDetails {
     @Override
     public String getUsername() { return getUserName(); }
 
-    public List<Role> getRoles() { return roles; }
+    public Set<Role> getRoles() { return roles; }
 
-    public void setRoles(List<Role> roles) {
+    public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }
 
@@ -153,5 +151,6 @@ public class User implements UserDetails {
                 ", password='" + userPassword + '\'' +
                 '}';
     }
+
 }
 
