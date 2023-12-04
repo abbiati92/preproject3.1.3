@@ -38,7 +38,8 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public void deleteUser(Long id) {
-        entityManager.remove(entityManager.find(User.class,id));
+        User user = entityManager.find(User.class,id);
+        entityManager.remove(user);
     }
 
     @Override
@@ -54,11 +55,4 @@ public class UserDaoImpl implements UserDao {
         return (User) query.getSingleResult();
     }
 
-   @Override
-    public void setUserRole(Long id, int roleId) {
-        entityManager.createNativeQuery("INSERT INTO user_roles (users_id, roles_id) VALUES (?,?)")
-                .setParameter(1, id)
-                .setParameter(2, roleId)
-                .executeUpdate();
-    }
 }

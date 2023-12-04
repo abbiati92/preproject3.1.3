@@ -22,7 +22,7 @@ public class RoleService {
     }
 
 
-    public Role getRole(String name) {
+    public Role getRoleForName(String name) {
         return entityManager.createQuery("select r from Role r where r.role =: role", Role.class)
                 .setParameter("role", name).getSingleResult();
     }

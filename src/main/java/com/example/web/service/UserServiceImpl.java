@@ -43,6 +43,7 @@ public class UserServiceImpl implements UserService {
     public void deleteUser(Long id) {
         userDao.deleteUser(id);
     }
+
     @Override
     public void editUser(User user) {
         userDao.editUser(user);
@@ -52,6 +53,7 @@ public class UserServiceImpl implements UserService {
     public User findByUsername(String username) {
        return userDao.findByUsername(username);
     }
+
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -63,9 +65,5 @@ public class UserServiceImpl implements UserService {
                 user.isAccountNonExpired(), user.isCredentialsNonExpired(),
                 user.isEnabled(), user.isAccountNonLocked(),
                 user.getRoles());
-    }
-    @Override
-    public void setUserRole(Long id, int roleId) {
-        userDao.setUserRole(id, roleId);
     }
 }

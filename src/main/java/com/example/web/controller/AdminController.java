@@ -42,15 +42,16 @@ public class AdminController {
     public String addUser(@ModelAttribute("user") User user, @RequestParam("checkRoles") String[] selectResult) {
         Set<Role> roles = new HashSet<>();
         for (String s : selectResult) {
-            roles.add(roleService.getRole("ROLE_" + s));
+            roles.add(roleService.getRoleForName("ROLE_" + s));
             user.setRoles(roles);
         }
         userService.addUser(user);
         return "redirect:/admin";
     }
 
+
     @GetMapping("/deleteUser")
-    public String deleteUser(@RequestParam("id") long id) {
+    public String deleteUser(@RequestParam("id") Long id) {
         userService.deleteUser(id);
         return "redirect:/admin";
     }
@@ -65,7 +66,7 @@ public class AdminController {
     public String editUser(@ModelAttribute("user") User user,@RequestParam("checkRoles") String[] selectResult) {
         Set<Role> roles = new HashSet<>();
         for (String s : selectResult) {
-            roles.add(roleService.getRole("ROLE_" + s));
+            roles.add(roleService.getRoleForName("ROLE_" + s));
             user.setRoles(roles);
         }
         userService.editUser(user);

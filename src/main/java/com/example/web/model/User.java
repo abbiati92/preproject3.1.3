@@ -37,10 +37,10 @@ public class User implements UserDetails {
         this.userPassword= userPassword;
     }
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.LAZY)
     @JoinTable(name = "user_roles",
-            joinColumns = @JoinColumn(name = "users_id"),
-            inverseJoinColumns = @JoinColumn(name = "roles_id"))
+            joinColumns = @JoinColumn(name = "users_id" ,nullable = false, updatable = false),
+            inverseJoinColumns = @JoinColumn(name = "roles_id",nullable = false, updatable = false))
     private Set<Role> roles = new HashSet<>();
 
     public Long getId() {
