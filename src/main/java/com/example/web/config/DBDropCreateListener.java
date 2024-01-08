@@ -18,7 +18,7 @@ public class DBDropCreateListener implements ApplicationListener<ContextClosedEv
 
     @Override
     public void onApplicationEvent(ContextClosedEvent event) {
-        jdbcTemplate.execute("DROP DATABASE my_schema");
-        jdbcTemplate.execute("CREATE DATABASE my_schema");
+        jdbcTemplate.execute("DROP DATABASE abbiati92");
+        jdbcTemplate.execute("CREATE DATABASE abbiati92");
     }
 }
