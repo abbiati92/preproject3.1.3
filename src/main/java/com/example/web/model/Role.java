@@ -3,62 +3,68 @@ package com.example.web.model;
 import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
-import java.util.List;
+import java.util.Objects;
 
 @Entity
-@Table(name = "roles")
 public class Role implements GrantedAuthority {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
-    @Column(name = "role")
-    private String role;
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinTable(name = "user_roles",
-            joinColumns = @JoinColumn(name = "roles_id"),
-            inverseJoinColumns = @JoinColumn(name = "users_id"))
-    private List<User> users;
+    private Integer id;
 
-    public Role(String role) {
-        this.role = role;
-    }
+    @Column(name = "rolename")
+    private String roleName;
 
     public Role() {
+
     }
 
-    public Long getId() {
-        return id;
+    public Role(String roleName) {
+        this.roleName = roleName;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    public String getRole() {
-        return role;
+    public Integer getId() {
+        return id;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
     }
 
-    public List<User> getUsers() {
-        return users;
-    }
-
-    public void setUsers(List<User> users) {
-        this.users = users;
+    public String getRoleName() {
+        return roleName;
     }
 
     @Override
     public String toString() {
-        return role;
+        return roleName;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        Role role = (Role) obj;
+        return role.id == id &&
+                Objects.equals(roleName, role.roleName);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = roleName != null ? roleName.hashCode() : 0;
+        result += id * 29;
+        return result;
     }
 
     @Override
     public String getAuthority() {
-        return getRole();
+        return roleName;
     }
 }

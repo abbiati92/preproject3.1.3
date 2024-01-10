@@ -1,69 +1,69 @@
 package com.example.web.service;
 
-import com.example.web.dao.UserDao;
 import com.example.web.model.User;
+import com.example.web.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.Query;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 
 import java.util.List;
-@Service
-@Transactional
-public class UserServiceImpl implements UserService {
 
-    private final UserDao userDao;
+@Service
+public class UserServiceImpl implements UserService {
+    private final UserRepository userRepository;
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserServiceImpl(UserDao userDao) {
-        this.userDao = userDao;
+    public void setPasswordEncoder(@Lazy PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    public UserServiceImpl(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public List<User> getUsersList() {
-        return userDao.getUsersList();
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public User getUser(Long id) {
-        return userDao.getUser(id);
+    public User getUserById(Integer id) {
+        return userRepository.getById(id);
     }
 
     @Override
-    public void addUser(User user) {
-        userDao.addUser(user);
+    public void createUser(User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        userRepository.save(user);
     }
 
     @Override
-    public void deleteUser(Long id) {
-        userDao.deleteUser(id);
+    public void updateUser(User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        userRepository.save(user);
     }
 
     @Override
-    public void editUser(User user) {
-        userDao.editUser(user);
+    public void deleteUserById(Integer id) {
+        userRepository.deleteById(id);
     }
 
     @Override
     public User findByUsername(String username) {
-       return userDao.findByUsername(username);
+        return userRepository.findByUsername(username);
     }
 
+    @Override
+    public List<User> findAllWithRoles() {
+        return userRepository.findAllWithRoles();
+    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userDao.findByUsername(username);
-        if (user == null){
-            throw new UsernameNotFoundException(String.format("User %s not found",username));
-        }
-        return new  org.springframework.security.core.userdetails.User( user.getUsername(),user.getPassword(),
-                user.isAccountNonExpired(), user.isCredentialsNonExpired(),
-                user.isEnabled(), user.isAccountNonLocked(),
-                user.getRoles());
+        return userRepository.findByUsername(username);
     }
 }

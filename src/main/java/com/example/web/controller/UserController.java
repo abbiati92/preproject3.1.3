@@ -1,36 +1,44 @@
 package com.example.web.controller;
 
-import com.example.web.model.User;
 import com.example.web.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
 
-import java.security.Principal;
+import javax.servlet.http.HttpServletRequest;
 
 
 @Controller
-@RequestMapping("/user")
 public class UserController {
 
     private final UserService userService;
 
-    @Autowired
     public UserController(UserService userService) {
         this.userService = userService;
     }
 
-    @GetMapping()
-    public String userPage(Model model, Principal principal) {
-        User user = userService.findByUsername(principal.getName());
-        model.addAttribute("user", user);
-        return "user";
+    @GetMapping("/user")
+    public String showUser(Model model, Authentication authentication) {
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        model.addAttribute("user", userService.findByUsername(userDetails.getUsername()));
+        return "/user";
     }
+
+    @GetMapping("/user/logout")
+    public String logout(HttpServletRequest request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null) {
+            request.getSession().invalidate();
+        }
+        return "redirect:/login";
+    }
+
+    @GetMapping("/")
+    public String redirect() {
+        return "redirect:/login";
+    }
+
 }
-
-
-
-
-
-
