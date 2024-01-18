@@ -1,7 +1,5 @@
 package com.example.web.model;
 
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -11,127 +9,126 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+
+
 @Entity
+@Table(name = "user")
 public class User implements UserDetails {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-    @Column(name = "firstname")
+    private Long id;
+
+    @Column(name="first_name")
     private String firstName;
-    @Column(name = "secondname")
-    private String secondName;
-    @Column(name = "age")
-    private Integer age;
 
+    @Column(name="last_name")
+    private String lastName;
+
+    @Column
+    private int age;
+
+    @Column(name="user_name")
     private String username;
-    private String password;
-    @Fetch(FetchMode.JOIN)
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "users_role",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id")
-    )
 
-    private Set<Role> userRoles;
+    @Column
+    private String password;
+
+    //   @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+    @ManyToMany(cascade =  CascadeType.MERGE, fetch = FetchType.LAZY)
+    @JoinTable(name = "users_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Role> roles = new HashSet<>();
 
     public User() {
-        this.userRoles = new HashSet<>();
+
     }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public Set<Role> getUserRoles() {
-        return userRoles;
-    }
-
-    public void setUserRoles(Set<Role> userRoles) {
-        this.userRoles = userRoles;
-    }
-
-    public User(String firstName, String secondName, Integer age, String username, String password) {
+    public User (String firstName, String lastName, int age, String username, String password, Set<Role> roles) {
         this.firstName = firstName;
-        this.secondName = secondName;
+        this.lastName = lastName;
         this.age = age;
-        this.password = password;
         this.username = username;
+        this.password = password;
+        this.roles = roles;
     }
 
-
-    public void setId(int id) {
+    public User (Long id, String firstName, String lastName, int age, String username, String password, Set<Role> roles) {
         this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.age = age;
+        this.username = username;
+        this.password = password;
+        this.roles = roles;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getFirstName() {
         return firstName;
     }
 
-    public void setSecondName(String secondName) {
-        this.secondName = secondName;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
-    public String getSecondName() {
-        return secondName;
+    public String getLastName() {
+        return lastName;
     }
 
-    public void setAge(Integer age) {
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
         this.age = age;
     }
 
-    public Integer getAge() {
-        return age;
+    public String getUserName() {
+        return username;
+    }
+
+    public void setUserName(String userName) {
+        this.username = userName;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
     }
 
     @Override
     public String toString() {
-        return firstName + " " + secondName;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null || getClass() != obj.getClass()) {
-            return false;
-        }
-        User user = (User) obj;
-        return Objects.equals(id, user.id) &&
-                Objects.equals(secondName, user.secondName) &&
-                Objects.equals(firstName, user.firstName) &&
-                user.age == age;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = firstName != null ? firstName.hashCode() : 0;
-        result += secondName != null ? secondName.hashCode() : 0;
-        result += age * 29;
-        result = id != null ? id.hashCode() : 0;
-        return result;
+        return "User" +
+                "id = " + id +
+                ", firstName = " + firstName +
+                ", lastName = " + lastName +
+                ", age = " + age;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return userRoles;
+        Set<Role> roles = getRoles();
+        return new HashSet<GrantedAuthority>(roles);
     }
 
     @Override
@@ -162,5 +159,18 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return age == user.age && Objects.equals(id, user.id) && Objects.equals(firstName, user.firstName) && Objects.equals(lastName, user.lastName) && Objects.equals(username, user.username) && Objects.equals(password, user.password) && Objects.equals(roles, user.roles);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getFirstName(), getLastName(), getAge(), getUsername(), getPassword(), getRoles());
     }
 }

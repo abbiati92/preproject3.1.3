@@ -1,69 +1,78 @@
 package com.example.web.service;
 
+import com.example.web.model.Role;
 import com.example.web.model.User;
 import com.example.web.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
-public class UserServiceImpl implements UserService {
+@Transactional
+public class UserServiceImp implements UserService {
+
     private final UserRepository userRepository;
-    private PasswordEncoder passwordEncoder;
+
 
     @Autowired
-    public void setPasswordEncoder(@Lazy PasswordEncoder passwordEncoder) {
-        this.passwordEncoder = passwordEncoder;
-    }
-
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImp(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
     @Override
-    public List<User> getAllUsers() {
+    @Transactional(readOnly = true)
+    public List<User> allUsers() {
         return userRepository.findAll();
     }
 
-    @Override
-    public User getUserById(Integer id) {
-        return userRepository.getById(id);
-    }
 
     @Override
-    public void createUser(User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+    public void add(User user) {
         userRepository.save(user);
     }
 
     @Override
-    public void updateUser(User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+    public void remove(long id) {
+        userRepository.delete(userRepository.getById((int) id));
+    }
+
+    @Override
+    public void edit(User user) {
         userRepository.save(user);
     }
 
     @Override
-    public void deleteUserById(Integer id) {
-        userRepository.deleteById(id);
+    @Transactional(readOnly = true)
+    public User getById(long id) {
+        return userRepository.getById((int) id);
     }
 
     @Override
-    public User findByUsername(String username) {
-        return userRepository.findByUsername(username);
+    @Transactional(readOnly = true)
+    public User findByUsername(String userName) {
+        return userRepository.findByUsername(userName);
     }
 
     @Override
-    public List<User> findAllWithRoles() {
-        return userRepository.findAllWithRoles();
-    }
-
-    @Override
+    @Transactional(readOnly = true
+    )
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findByUsername(username);
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
+            throw new UsernameNotFoundException("User not found");
+        }
+        return user;
+    }
+
+    private Collection<? extends GrantedAuthority> mapRolesToAuthorities(Collection<Role> roles) {
+        return roles.stream().map(r -> new SimpleGrantedAuthority(r.getName())).collect(Collectors.toList());
     }
 }
